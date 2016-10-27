@@ -1,0 +1,39 @@
+﻿@model eCademy.NUh15.PhotoShare.Models.Photo
+
+@{
+    ViewBag.Title = "View";
+}
+
+<h2>View</h2>
+
+    <form id="upload-form" class="dropzone" method="post" action="/api/photos">
+        <div class="form-horizontal">
+            <h4>Photo</h4>
+            <hr />
+
+            <div class="form-group">
+                <div class="col-md-10">
+                    <input type="text" name="title" placeholder="Title" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Create" class="btn btn-default" />
+                </div>
+            </div>
+        </div>
+    </form>
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section styles {
+    <link href="~/Content/dropzone.css" rel="stylesheet" />
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/dropzone.js"></script>
+    <script src="~/Scripts/Custom/uploadPhoto.js"></script>
+}
