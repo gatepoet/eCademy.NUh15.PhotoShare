@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using eCademy.NUh15.PhotoShare.Migrations;
 
 namespace eCademy.NUh15.PhotoShare.Models
 {
@@ -23,6 +24,7 @@ namespace eCademy.NUh15.PhotoShare.Models
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
         {
+            Database.SetInitializer(new AppDbInitializer());
         }
 
         public static ApplicationDbContext Create()

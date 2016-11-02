@@ -221,6 +221,7 @@
     <Compile Include="Migrations\201610271930227_Add Photos.Designer.cs">
       <DependentUpon>201610271930227_Add Photos.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\AppDbInitializer.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
