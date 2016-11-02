@@ -94,6 +94,7 @@ namespace eCademy.NUh15.PhotoShare.Controllers.API
         }
 
         // POST: api/Photos
+        [Authorize]
         [ResponseType(typeof(Photo))]
         public IHttpActionResult PostPhoto()
         {

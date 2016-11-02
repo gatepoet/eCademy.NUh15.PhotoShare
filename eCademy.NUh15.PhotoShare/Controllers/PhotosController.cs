@@ -9,6 +9,7 @@ namespace eCademy.NUh15.PhotoShare.Controllers
     public class PhotosController : Controller
     {
         // GET: Photos
+        [Authorize]
         public ActionResult Upload()
         {
             return View();
