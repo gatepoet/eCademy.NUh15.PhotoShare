@@ -10,6 +10,7 @@ using System.Web;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using System.IO;
+using System.Collections.Generic;
 
 namespace eCademy.NUh15.PhotoShare.Controllers.API
 {
@@ -40,9 +41,15 @@ namespace eCademy.NUh15.PhotoShare.Controllers.API
         }
 
         // GET: api/Photos
-        public IQueryable<Photo> GetPhotos()
+        public IEnumerable<PhotoDto> GetPhotos()
         {
-            return db.Photos;
+            return db.Photos.ToList()
+                .Select(p => new PhotoDto {
+                    Id = p.Id,
+                    Title = p.Title,
+                    ImageUrl = Url.Route("Images", new { id = p.Image.Id }), 
+                    Username = p.User.UserName
+                });
         }
 
         // GET: api/Photos/5

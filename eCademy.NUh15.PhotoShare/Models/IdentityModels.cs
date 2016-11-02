@@ -33,5 +33,6 @@ namespace eCademy.NUh15.PhotoShare.Models
         }
 
         public IDbSet<Photo> Photos { get; set; }
+        public IDbSet<Image> Images { get; set; }
     }
 }

@@ -14,6 +14,11 @@ namespace eCademy.NUh15.PhotoShare
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
+                name: "Images",
+                url: "Images/{id}",
+                defaults: new { controller = "Images", action = "Index" });
+
+            routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
