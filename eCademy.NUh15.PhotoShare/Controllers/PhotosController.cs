@@ -12,6 +12,7 @@ namespace eCademy.NUh15.PhotoShare.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         [Authorize]
+        [Route("Photos/Upload")]
         public ViewResult Upload()
         {
             return View();
