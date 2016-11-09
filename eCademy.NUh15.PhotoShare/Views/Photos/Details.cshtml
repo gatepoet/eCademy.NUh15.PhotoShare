@@ -1,0 +1,16 @@
+﻿@model eCademy.NUh15.PhotoShare.Models.PhotoDto
+
+@{
+    ViewBag.Title = "View";
+}
+
+<h2>@Model.Title</h2>
+
+<div>
+    <a href="#">
+        <h4 class="username">@@<span>@Model.Username</span></h4>
+    </a>
+    <hr />
+
+    <img src="@Model.ImageUrl" alt="@Model.Title" />
+</div>
