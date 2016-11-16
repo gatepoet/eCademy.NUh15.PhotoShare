@@ -222,6 +222,10 @@
     <Compile Include="Migrations\201610271930227_Add Photos.Designer.cs">
       <DependentUpon>201610271930227_Add Photos.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201611161431010_PhotoTimestamp.cs" />
+    <Compile Include="Migrations\201611161431010_PhotoTimestamp.Designer.cs">
+      <DependentUpon>201611161431010_PhotoTimestamp.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\AppDbInitializer.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -320,6 +324,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201610271930227_Add Photos.resx">
       <DependentUpon>201610271930227_Add Photos.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611161431010_PhotoTimestamp.resx">
+      <DependentUpon>201611161431010_PhotoTimestamp.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

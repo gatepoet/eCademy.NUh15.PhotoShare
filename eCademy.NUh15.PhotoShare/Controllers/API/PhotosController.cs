@@ -43,12 +43,16 @@ namespace eCademy.NUh15.PhotoShare.Controllers.API
         // GET: api/Photos
         public IEnumerable<PhotoDto> GetPhotos()
         {
-            return db.Photos.ToList()
+            return db.Photos
+                .OrderByDescending(p => p.Timestamp)
+                .Take(9)
+                .ToList()
                 .Select(p => new PhotoDto {
                     Id = p.Id,
                     Title = p.Title,
                     ImageUrl = Url.Route("Images", new { id = p.Image.Id }), 
-                    Username = p.User.UserName
+                    Username = p.User.UserName,
+                    Timestamp = p.Timestamp
                 });
         }
 
@@ -126,7 +130,8 @@ namespace eCademy.NUh15.PhotoShare.Controllers.API
                     Filename = file.FileName,
                     Data = ConvertToByteArray(file.InputStream)
                 },
-                Title = title
+                Title = title,
+                Timestamp = DateTime.Now
             };
 
             db.Photos.Add(photo);

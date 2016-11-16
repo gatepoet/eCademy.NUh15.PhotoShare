@@ -11,5 +11,6 @@ namespace eCademy.NUh15.PhotoShare.Models
         public string Title { get; set; }
         public string Username { get; set; }
         public string ImageUrl { get; set; }
+        public DateTime Timestamp { get; set; }
     }
 }
