@@ -26,8 +26,14 @@ namespace eCademy.NUh15.PhotoShare
                       "~/Scripts/bootstrap.js",
                       "~/Scripts/respond.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/bootstrap-material-design").Include(
+                      "~/Scripts/material.js",
+                      "~/Scripts/ripples.js"));
+
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
+                      "~/Content/bootstrap-material-design.css",
+                      "~/Content/ripples.css",
                       "~/Content/site.css"));
         }
     }
