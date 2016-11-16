@@ -50,7 +50,8 @@ namespace eCademy.NUh15.PhotoShare.Controllers.API
                 .Select(p => new PhotoDto {
                     Id = p.Id,
                     Title = p.Title,
-                    ImageUrl = Url.Route("Images", new { id = p.Image.Id }), 
+                    ImageUrl = Url.Route("Images", new { id = p.Image.Id }),
+                    PhotoUrl = Url.Route("ViewPhoto", new { id = p.Id }),
                     Username = p.User.UserName,
                     Timestamp = p.Timestamp
                 });
@@ -165,7 +166,6 @@ namespace eCademy.NUh15.PhotoShare.Controllers.API
         }
 
         // DELETE: api/Photos/5
-        [ResponseType(typeof(Photo))]
         public IHttpActionResult DeletePhoto(Guid id)
         {
             Photo photo = db.Photos.Find(id);
@@ -177,7 +177,7 @@ namespace eCademy.NUh15.PhotoShare.Controllers.API
             db.Photos.Remove(photo);
             db.SaveChanges();
 
-            return Ok(photo);
+            return Ok();
         }
 
         protected override void Dispose(bool disposing)

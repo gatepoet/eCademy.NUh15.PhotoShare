@@ -14,7 +14,9 @@
         <a href="#">
             <span class="username">@@<span data-bind="text: Username"></span></span>
         </a>
-        <img data-bind="attr: { src: ImageUrl }" />
+        <a data-bind="attr: {href: PhotoUrl}">
+            <img data-bind="attr: { src: ImageUrl }" />
+        </a>
     </div>
 </div>
 

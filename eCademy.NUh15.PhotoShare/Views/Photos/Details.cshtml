@@ -10,7 +10,28 @@
     <a href="#">
         <h4 class="username">@@<span>@Model.Username</span></h4>
     </a>
+    
+    <button data-bind="click: deletePhoto" class="btn btn-fab btn-danger">
+        <span class="glyphicon glyphicon-remove"></span>
+    </button>
     <hr />
 
     <img src="@Model.ImageUrl" alt="@Model.Title" />
 </div>
+@section scripts {
+    <script>
+        $(function () {
+            var id = '@Model.Id';
+            var viewModel = {
+                deletePhoto: function () {
+                    $.ajax('/api/Photos/' + id, {
+                        method: 'DELETE'
+                    }).done(function (){
+                        window.location = '/';
+                    });
+                }
+            };
+            ko.applyBindings(viewModel);
+        });
+    </script>
+}

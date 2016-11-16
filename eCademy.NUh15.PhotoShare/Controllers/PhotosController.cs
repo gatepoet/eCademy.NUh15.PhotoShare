@@ -18,7 +18,7 @@ namespace eCademy.NUh15.PhotoShare.Controllers
             return View();
         }
 
-        [Route("Photos/{id}")]
+        [Route("Photos/{id}", Name = "ViewPhoto")]
         public ActionResult Index(Guid id)
         {
             var photo = db.Photos.SingleOrDefault(p => p.Id == id);
