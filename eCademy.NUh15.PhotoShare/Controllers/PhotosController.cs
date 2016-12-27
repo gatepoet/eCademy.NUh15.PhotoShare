@@ -1,4 +1,5 @@
 ﻿using eCademy.NUh15.PhotoShare.Models;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +32,11 @@ namespace eCademy.NUh15.PhotoShare.Controllers
                 Id = photo.Id,
                 Title = photo.Title,
                 ImageUrl = Url.RouteUrl("Images", new { id = photo.Image.Id }),
-                Username = photo.User.UserName
+                PhotoUrl = Url.RouteUrl("ViewPhoto", new { id = photo.Id }),
+                Username = photo.User.UserName,
+                Timestamp = photo.Timestamp,
+                Rating = photo.GetRating(User.Identity.GetUserId()),
+                Score = photo.GetScore()
             };
             return View("Details", photoDto);
         }

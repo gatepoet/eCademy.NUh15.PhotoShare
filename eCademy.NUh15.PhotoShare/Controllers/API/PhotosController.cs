@@ -11,6 +11,9 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using System.IO;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace eCademy.NUh15.PhotoShare.Controllers.API
 {
@@ -50,22 +53,35 @@ namespace eCademy.NUh15.PhotoShare.Controllers.API
                 .Select(p => new PhotoDto {
                     Id = p.Id,
                     Title = p.Title,
-                    ImageUrl = Url.Route("Images", new { id = p.Image.Id }),
+                    ImageUrl = Url.Route("Images", new { id = p.Image.Id, thumb = 200 }),
                     PhotoUrl = Url.Route("ViewPhoto", new { id = p.Id }),
                     Username = p.User.UserName,
-                    Timestamp = p.Timestamp
+                    Timestamp = p.Timestamp,
+                    Rating = p.GetRating(User.Identity.GetUserId()),
+                    Score = p.GetScore()
                 });
         }
 
         // GET: api/Photos/5
-        [ResponseType(typeof(Photo))]
-        public IHttpActionResult GetPhoto(Guid id)
+        [ResponseType(typeof(PhotoDto))]
+        public IHttpActionResult GetPhoto(Guid id, int? thumb)
         {
-            Photo photo = db.Photos.Find(id);
-            if (photo == null)
+            var p = db.Photos.Find(id);
+            if (p == null)
             {
                 return NotFound();
             }
+            var photo = new PhotoDto
+            {
+                Id = p.Id,
+                Title = p.Title,
+                ImageUrl = Url.Route("Images", new { id = p.Image.Id }),
+                PhotoUrl = Url.Route("ViewPhoto", new { id = p.Id }),
+                Username = p.User.UserName,
+                Timestamp = p.Timestamp,
+                Rating = p.GetRating(User.Identity.GetUserId()),
+                Score = p.GetScore()
+            };
 
             return Ok(photo);
         }
@@ -125,7 +141,7 @@ namespace eCademy.NUh15.PhotoShare.Controllers.API
             {
                 Id = Guid.NewGuid(),
                 User = user,
-                Image = new Image
+                Image = new Models.Image
                 {
                     Id = Guid.NewGuid(),
                     Filename = file.FileName,
@@ -178,6 +194,17 @@ namespace eCademy.NUh15.PhotoShare.Controllers.API
             db.SaveChanges();
 
             return Ok();
+        }
+
+
+        [HttpPut]
+        [Route("api/photo/{id:guid}/rate/{rating:int}")]
+        public IHttpActionResult PutRate(Guid id, int rating)
+        {
+            ///TODO: Rate photo, return new score.
+            var newScore = 1.1;
+
+            return Ok(new RateResult(newScore));
         }
 
         protected override void Dispose(bool disposing)
