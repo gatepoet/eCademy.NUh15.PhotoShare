@@ -201,8 +201,12 @@ namespace eCademy.NUh15.PhotoShare.Controllers.API
         [Route("api/photo/{id:guid}/rate/{rating:int}")]
         public IHttpActionResult PutRate(Guid id, int rating)
         {
-            ///TODO: Rate photo, return new score.
-            var newScore = 1.1;
+            var photo = db.Photos.Find(id);
+            var user = db.Users.Find(User.Identity.GetUserId());
+
+            photo.Rate(rating, user);
+            db.SaveChanges();
+            var newScore = photo.GetScore();
 
             return Ok(new RateResult(newScore));
         }

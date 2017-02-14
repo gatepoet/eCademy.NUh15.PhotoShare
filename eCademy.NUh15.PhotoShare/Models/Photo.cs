@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace eCademy.NUh15.PhotoShare.Models
 {
@@ -14,23 +15,34 @@ namespace eCademy.NUh15.PhotoShare.Models
 
         public double GetScore()
         {
-            ///TODO: Calculate the average of all ratings for this photo.
-            var score = new Random().NextDouble() * 5.0;
-
-            return score;
+            return Ratings.Any()
+                ? Ratings.Average(rating => rating.Rating)
+                : 0;
         }
 
         public int GetRating(string userId)
         {
-            ///TODO: Get rating for specific user. Return zero if user has not rated.
-            var rating = new Random().Next(1, 5);
-
-            return rating;
+            return Ratings.SingleOrDefault(r => r.User.Id.Equals(userId))?.Rating ?? 0;
         }
 
         public void Rate(int value, ApplicationUser user)
         {
-            ///TODO: Add or update rating for user.
+            var rating = Ratings.SingleOrDefault(r => r.User.Equals(user));
+            if (rating == null)
+            {
+                rating = new UserRating
+                {
+                    Id = Guid.NewGuid(),
+                    Photo = this,
+                    User = user,
+                    Rating = value
+                };
+                Ratings.Add(rating);
+            }
+            else
+            {
+                rating.Rating = value;
+            }
         }
 
     }
