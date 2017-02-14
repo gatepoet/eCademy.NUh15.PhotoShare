@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="ViewGlobalStream">View global stream</string>
-    <string name="ApplicationName">eCademy.NUh15.PhotoShare.Droid</string>
+  <string name="ViewGlobalStream">View global stream</string>
+  <string name="ApplicationName">eCademy.NUh15.PhotoShare.Droid</string>
+  <string name="app_name">PhotoShare\nNUh15</string>
 </resources>
