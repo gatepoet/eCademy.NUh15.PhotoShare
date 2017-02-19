@@ -6,11 +6,18 @@ using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Google;
 using Owin;
 using eCademy.NUh15.PhotoShare.Models;
+using Microsoft.Owin.Security.OAuth;
+using eCademy.NUh15.PhotoShare.App_Start;
+using System.Configuration;
+using Microsoft.Owin.Security.Facebook;
 
 namespace eCademy.NUh15.PhotoShare
 {
     public partial class Startup
     {
+        public static FacebookAuthenticationOptions FacebookAuthOptions { get; internal set; }
+        public static OAuthAuthorizationServerOptions OAuthOptions { get; private set; }
+        public static string PublicClientId { get; private set; }
         // For more information on configuring authentication, please visit http://go.microsoft.com/fwlink/?LinkId=301864
         public void ConfigureAuth(IAppBuilder app)
         {
@@ -45,6 +52,17 @@ namespace eCademy.NUh15.PhotoShare
             // This is similar to the RememberMe option when you log in.
             app.UseTwoFactorRememberBrowserCookie(DefaultAuthenticationTypes.TwoFactorRememberBrowserCookie);
 
+            PublicClientId = "self";
+            OAuthOptions = new OAuthAuthorizationServerOptions
+            {
+                TokenEndpointPath = new PathString("/token"),
+                Provider = new ApplicationOAuthProvider(PublicClientId),
+                AuthorizeEndpointPath = new PathString("/api/Account/ExternalLogin"),
+                AccessTokenExpireTimeSpan = TimeSpan.FromDays(30),
+                AllowInsecureHttp = bool.Parse(ConfigurationManager.AppSettings["AllowInsecureHttp"])
+            };
+
+            app.UseOAuthBearerTokens(OAuthOptions);
             // Uncomment the following lines to enable logging in with third party login providers
             //app.UseMicrosoftAccountAuthentication(
             //    clientId: "",
@@ -53,10 +71,13 @@ namespace eCademy.NUh15.PhotoShare
             //app.UseTwitterAuthentication(
             //   consumerKey: "",
             //   consumerSecret: "");
+            FacebookAuthOptions = new FacebookAuthenticationOptions
+            {
+                AppId = ConfigurationManager.AppSettings["Facebook_AppId"],
+                AppSecret = ConfigurationManager.AppSettings["Facebook_AppSecret"]
+            };
 
-            //app.UseFacebookAuthentication(
-            //   appId: "",
-            //   appSecret: "");
+            app.UseFacebookAuthentication(FacebookAuthOptions);
 
             //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
             //{

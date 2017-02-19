@@ -10,13 +10,19 @@ namespace eCademy.NUh15.PhotoShare.Droid
     public class PhotoService
     {
         private readonly string baseUrl;
-        public string BaseUrl => baseUrl;
 
         private readonly string GetGlobalStreamPhotosUrl = "api/photos/";
+        private readonly string VerifyExternalTokenUrl = "api/account/verifyExternalToken";
+        private ExternalTokenResponse photoshareToken;
+        private AndroidSecureDataProvider secureDataProvider;
+        private const string PhotoShareStoreKey = "PhotoShare";
 
-        public PhotoService(string baseUrl)
+        public PhotoService()
         {
-            this.baseUrl = baseUrl;
+            this.baseUrl = "http://photoshare.one/";
+            secureDataProvider = new AndroidSecureDataProvider();
+            photoshareToken = secureDataProvider.Retreive(PhotoShareStoreKey)
+                .FromDictionary<ExternalTokenResponse>();
         }
 
         public async Task<Photo[]> GetGlobalStreamPhotos()
@@ -35,6 +41,12 @@ namespace eCademy.NUh15.PhotoShare.Droid
                     throw;
                 }
             }
+        }
+
+        public void SignOut()
+        {
+            photoshareToken = null;
+            secureDataProvider.Clear(PhotoShareStoreKey);
         }
 
         private WebClient CreateWebClient()
@@ -57,5 +69,58 @@ namespace eCademy.NUh15.PhotoShare.Droid
                 return bitmap;
             }
         }
+
+        public async Task SignInWithFacebookToken(string token)
+        {
+            using (var client = CreateWebClient())
+            {
+                var request = new ExternalTokenRequest
+                {
+                    Provider = "Facebook",
+                    Token = token
+                };
+                client.Headers.Add(HttpRequestHeader.ContentType, "application/json");
+
+                var result = await client.UploadStringTaskAsync(
+                    VerifyExternalTokenUrl,
+                    JsonConvert.SerializeObject(request));
+
+                var response = JsonConvert.DeserializeObject<ExternalTokenResponse>(result);
+
+                //TODO: store in secure data provider
+
+                photoshareToken = response;
+            }
+        }
+    }
+    public class ExternalTokenRequest
+    {
+        public string Token { get; set; }
+
+        public string Provider { get; set; }
+    }
+
+    public class ExternalTokenResponse
+    {
+        [JsonProperty("userName")]
+        public string Username { get; set; }
+
+        [JsonProperty("userId")]
+        public string UserId { get; set; }
+
+        [JsonProperty("access_token")]
+        public string AccessToken { get; set; }
+
+        [JsonProperty("token_type")]
+        public string TokenType { get; set; }
+
+        [JsonProperty("expires_in")]
+        public double ExpiresIn { get; set; }
+
+        [JsonProperty("issued")]
+        public DateTime Issued { get; set; }
+
+        [JsonProperty("expires")]
+        public DateTime Expires { get; set; }
     }
 }

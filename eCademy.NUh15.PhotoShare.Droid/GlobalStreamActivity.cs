@@ -20,7 +20,6 @@ namespace eCademy.NUh15.PhotoShare.Droid
     public class GlobalStreamActivity : Activity
     {
         private GlobalStreamAdapter adapter;
-        private readonly string baseUrl = "http://photoshare.one/";
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -28,7 +27,7 @@ namespace eCademy.NUh15.PhotoShare.Droid
 
             SetContentView(Resource.Layout.GlobalStream);
 
-            var service = new PhotoService(baseUrl);
+            var service = new PhotoService();
             adapter = new GlobalStreamAdapter(this, service);
             var grid = FindViewById<GridView>(Resource.Id.globalstream_photos);
             grid.Adapter = adapter;
