@@ -42,6 +42,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/ViewGlobalStream" />
+    <Button
+        android:id="@+id/main_uploadPhoto_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/UploadPhoto" />
     <com.facebook.login.widget.LoginButton
         android:id="@+id/login_button"
         android:layout_width="wrap_content"

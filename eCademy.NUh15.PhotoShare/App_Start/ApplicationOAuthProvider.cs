@@ -10,7 +10,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace eCademy.NUh15.PhotoShare.App_Start
+namespace eCademy.NUh15.PhotoShare
 {
 public class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
 {
@@ -47,6 +47,8 @@ public class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
         AuthenticationTicket ticket = new AuthenticationTicket(oAuthIdentity, properties);
         context.Validated(ticket);
         context.Request.Context.Authentication.SignIn(cookiesIdentity);
+        context.OwinContext.Response.Headers.Add("Access-Control-Allow-Origin", new[] { "*" });
+
     }
 
     public override Task TokenEndpoint(OAuthTokenEndpointContext context)
@@ -88,9 +90,9 @@ public class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
     public static AuthenticationProperties CreateProperties(string userName)
     {
         IDictionary<string, string> data = new Dictionary<string, string>
-    {
-        { "userName", userName }
-    };
+        {
+            { "userName", userName }
+        };
         return new AuthenticationProperties(data);
     }
 }

@@ -121,7 +121,56 @@ namespace eCademy.NUh15.PhotoShare.Controllers.API
             return StatusCode(HttpStatusCode.NoContent);
         }
 
+        [HttpPost]
+        [Authorize]
+        [Route("api/photos/uploadMobile")]
+        [ResponseType(typeof(Photo))]
+        public IHttpActionResult PostPhotoMobile(UploadPhotoRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = db.Users.Find(User.Identity.GetUserId());
+
+            var photo = new Photo
+            {
+                Id = Guid.NewGuid(),
+                User = user,
+                Image = new Models.Image
+                {
+                    Id = Guid.NewGuid(),
+                    Filename = request.Filename,
+                    Data = request.File
+                },
+                Title = request.Title,
+                Timestamp = DateTime.Now
+            };
+
+            db.Photos.Add(photo);
+
+
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (DbUpdateException)
+            {
+                if (PhotoExists(photo.Id))
+                {
+                    return Conflict();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return Ok(photo.Id);
+        }
         // POST: api/Photos
+        [HttpPost]
         [Authorize]
         [ResponseType(typeof(Photo))]
         public IHttpActionResult PostPhoto()

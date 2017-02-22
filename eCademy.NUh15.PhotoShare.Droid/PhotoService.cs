@@ -4,22 +4,63 @@ using Newtonsoft.Json;
 using Android.Graphics;
 using System;
 using System.Linq;
+using Xamarin.Facebook;
+using Java.Util;
+using Android.Util;
+using Android.Widget;
 
 namespace eCademy.NUh15.PhotoShare.Droid
 {
     public class PhotoService
     {
+        public enum LoginStatus
+        {
+            LoggedOut,
+            NeedsWebApiToken,
+            LoggedIn
+        }
+
         private readonly string baseUrl;
 
-        private readonly string GetGlobalStreamPhotosUrl = "api/photos/";
-        private readonly string VerifyExternalTokenUrl = "api/account/verifyExternalToken";
+        private readonly string GetGlobalStreamPhotosUrl = "/api/photos/";
+        private readonly string VerifyExternalTokenUrl = "/api/account/verifyExternalToken";
+        public const string UploadPhotoUrl = "/api/photos/uploadMobile";
         private ExternalTokenResponse photoshareToken;
         private AndroidSecureDataProvider secureDataProvider;
         private const string PhotoShareStoreKey = "PhotoShare";
 
+        public LoginStatus GetLoginStatus()
+        {
+            var facebookToken = AccessToken.CurrentAccessToken;
+            if (facebookToken == null || string.IsNullOrWhiteSpace(facebookToken.Token) || facebookToken.Expires.Before(new Date()))
+            {
+                return LoginStatus.LoggedOut;
+            }
+
+            if (photoshareToken == null || string.IsNullOrWhiteSpace(photoshareToken.AccessToken) || photoshareToken.Expires < System.DateTime.Now)
+            {
+                return LoginStatus.NeedsWebApiToken;
+            }
+
+            return LoginStatus.LoggedIn;
+        }
+
+        private string AuthorizationHeader
+        {
+            get
+            {
+                return "Bearer " + photoshareToken.AccessToken;
+            }
+        }
+
+
         public PhotoService()
         {
+#if DEBUG
+            this.baseUrl = "http://192.168.1.6:65213/";
+#else
             this.baseUrl = "http://photoshare.one/";
+#endif
             secureDataProvider = new AndroidSecureDataProvider();
             photoshareToken = secureDataProvider.Retreive(PhotoShareStoreKey)
                 .FromDictionary<ExternalTokenResponse>();
@@ -27,21 +68,22 @@ namespace eCademy.NUh15.PhotoShare.Droid
 
         public async Task<Photo[]> GetGlobalStreamPhotos()
         {
-            using (var client = CreateWebClient())
+            try
             {
-                try
+                using (var client = CreateWebClient())
                 {
-                    Android.Util.Log.Info("PhotoShare", "Getting photos");
+                    Log.Info("PhotoShare", "Getting photos");
                     var json = await client.DownloadStringTaskAsync(GetGlobalStreamPhotosUrl);
                     return JsonConvert.DeserializeObject<Photo[]>(json);
                 }
-                catch (WebException ex)
-                {
-                    Android.Util.Log.Error("PhotoShare", Java.Lang.Throwable.FromException(ex), "Could not get photos");
-                    throw;
-                }
+            }
+            catch (WebException ex)
+            {
+                Log.Error("PhotoShare", Java.Lang.Throwable.FromException(ex), "Could not get photos");
+                return new Photo[0];
             }
         }
+
 
         public void SignOut()
         {
@@ -51,45 +93,98 @@ namespace eCademy.NUh15.PhotoShare.Droid
 
         private WebClient CreateWebClient()
         {
-            return new WebClient() { BaseAddress = baseUrl };
+            return new WebClient()
+            {
+                BaseAddress = baseUrl
+            };
         }
 
         public async Task<Bitmap> GetImage(string url, int size)
         {
-            using (var client = CreateWebClient())
-            {
-                client.QueryString.Add("thumb", size.ToString());
-                var imageBytes = await client.DownloadDataTaskAsync(url);
-                if (imageBytes == null || imageBytes.Length == 0)
-                {
-                    return null;
-                }
 
-                var bitmap = await BitmapFactory.DecodeByteArrayAsync(imageBytes, 0, imageBytes.Length);
-                return bitmap;
+            try
+            {
+                using (var client = CreateWebClient())
+                {
+                    client.QueryString.Add("thumb", size.ToString());
+                    var imageBytes = await client.DownloadDataTaskAsync(url);
+                    if (imageBytes == null || imageBytes.Length == 0)
+                    {
+                        return null;
+                    }
+
+                    var bitmap = await BitmapFactory.DecodeByteArrayAsync(imageBytes, 0, imageBytes.Length);
+                    return bitmap;
+                }
             }
+            catch (WebException ex)
+            {
+                Log.Error("PhotoShare", Java.Lang.Throwable.FromException(ex), "Could not get image");
+                return null;
+            }
+        }
+
+        public async Task<Guid> UploadPhoto(string title, string filename, byte[] file)
+        {
+            EnsureLoggedIn();
+            try
+            {
+                using (var client = CreateWebClient())
+                {
+                    client.Headers.Add(HttpRequestHeader.Authorization, AuthorizationHeader);
+                    client.Headers.Add(HttpRequestHeader.ContentType, "application/json");
+                    var request = new UploadPhotoRequest { Title = title, Filename = filename, File = file };
+                    var result = await client.UploadStringTaskAsync(UploadPhotoUrl, "POST", JsonConvert.SerializeObject(request));
+                    var newId = JsonConvert.DeserializeObject<Guid>(result);
+                    return newId;
+                }
+            }
+            catch (WebException ex)
+            {
+                Log.Error("PhotoShare", Java.Lang.Throwable.FromException(ex), "Could not upload photo");
+                return Guid.Empty;
+            }
+        }
+
+
+        private void EnsureLoggedIn()
+        {
+            var status = GetLoginStatus();
+            if (status == LoginStatus.LoggedIn)
+                return;
+            throw new NotLoggedInException(status);
         }
 
         public async Task SignInWithFacebookToken(string token)
         {
-            using (var client = CreateWebClient())
+            try
             {
-                var request = new ExternalTokenRequest
+                using (var client = CreateWebClient())
                 {
-                    Provider = "Facebook",
-                    Token = token
-                };
-                client.Headers.Add(HttpRequestHeader.ContentType, "application/json");
+                    var request = new ExternalTokenRequest
+                    {
+                        Provider = "Facebook",
+                        Token = token
+                    };
 
-                var result = await client.UploadStringTaskAsync(
-                    VerifyExternalTokenUrl,
-                    JsonConvert.SerializeObject(request));
+                    client.Headers.Add(HttpRequestHeader.ContentType, "application/json");
 
-                var response = JsonConvert.DeserializeObject<ExternalTokenResponse>(result);
+                    var result = await client.UploadStringTaskAsync(
+                        VerifyExternalTokenUrl,
+                        "POST",
+                        JsonConvert.SerializeObject(request));
 
-                //TODO: store in secure data provider
+                    var response = JsonConvert.DeserializeObject<ExternalTokenResponse>(result);
 
-                photoshareToken = response;
+                    secureDataProvider.Store(response.UserId, PhotoShareStoreKey, response.ToDictionary());
+
+                    photoshareToken = response;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error("PhotoShare", Java.Lang.Throwable.FromException(ex), "Could not get photos");
+                throw;
             }
         }
     }
@@ -122,5 +217,26 @@ namespace eCademy.NUh15.PhotoShare.Droid
 
         [JsonProperty("expires")]
         public DateTime Expires { get; set; }
+    }
+
+    public class UploadPhotoRequest
+    {
+        public string Title
+        {
+            get;
+            set;
+        }
+
+        public string Filename
+        {
+            get;
+            set;
+        }
+
+        public byte[] File
+        {
+            get;
+            set;
+        }
     }
 }

@@ -22,18 +22,17 @@ namespace eCademy.NUh15.PhotoShare.Droid.Services
             this.service = service;
         }
 
-        protected override void OnCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken)
+        protected override async void OnCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken)
         {
             if (currentAccessToken == null)
             {
                 service.SignOut();
-                if (HandleLoggedOut != null)
-                    HandleLoggedOut();
+                HandleLoggedOut?.Invoke();
             }
             else
             {
-                if (HandleLoggedIn != null)
-                    HandleLoggedIn();
+                await service.SignInWithFacebookToken(currentAccessToken.Token);
+                HandleLoggedIn?.Invoke();
             }
         }
     }

@@ -3,11 +3,9 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
-using Microsoft.Owin.Security.Google;
 using Owin;
 using eCademy.NUh15.PhotoShare.Models;
 using Microsoft.Owin.Security.OAuth;
-using eCademy.NUh15.PhotoShare.App_Start;
 using System.Configuration;
 using Microsoft.Owin.Security.Facebook;
 
@@ -74,9 +72,11 @@ namespace eCademy.NUh15.PhotoShare
             FacebookAuthOptions = new FacebookAuthenticationOptions
             {
                 AppId = ConfigurationManager.AppSettings["Facebook_AppId"],
-                AppSecret = ConfigurationManager.AppSettings["Facebook_AppSecret"]
+                AppSecret = ConfigurationManager.AppSettings["Facebook_AppSecret"],
+                Scope = { "email" },
+                BackchannelHttpHandler = new FacebookBackChannelHandler(),
+                UserInformationEndpoint = "https://graph.facebook.com/v2.4/me?fields=id,name,email"
             };
-
             app.UseFacebookAuthentication(FacebookAuthOptions);
 
             //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()

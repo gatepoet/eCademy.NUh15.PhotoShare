@@ -1,4 +1,5 @@
 ﻿using Microsoft.Owin;
+using Microsoft.Owin.Logging;
 using Owin;
 
 [assembly: OwinStartupAttribute(typeof(eCademy.NUh15.PhotoShare.Startup))]
