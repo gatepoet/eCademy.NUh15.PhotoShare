@@ -39,11 +39,10 @@ namespace eCademy.NUh15.PhotoShare.Droid
             if (IsThereAnAppToTakePictures())
             {
                 EnsurePermissions();
-                dir = Android.OS.Environment.GetExternalStoragePublicDirectory(
-                    Android.OS.Environment.DirectoryPictures);
                 imageView = FindViewById<ImageView>(Resource.Id.uploadPhoto_image);
                 imageView.Click += TakeAPhoto;
                 uploadButton.Click += UploadPhoto;
+                EnsureDirectoryExists();
             }
         }
 
@@ -143,5 +142,15 @@ namespace eCademy.NUh15.PhotoShare.Droid
             return availableActivities?.Count > 0;
         }
 
+        private void EnsureDirectoryExists()
+        {
+            dir = new Java.IO.File(
+                Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryPictures),
+                "PhotoShare");
+            if (!dir.Exists())
+            {
+                dir.Mkdirs();
+            }
+        }
     }
 }
