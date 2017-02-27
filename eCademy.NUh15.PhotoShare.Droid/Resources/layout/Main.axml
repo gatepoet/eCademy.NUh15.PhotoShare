@@ -10,7 +10,7 @@
         android:id="@+id/linearLayout1"
         android:layout_margin="20dp">
         <ImageView
-            android:src="@drawable/logo"
+            android:src="@drawable/photoshare_logo"
             android:id="@+id/logo_image"
             android:layout_width="50dp"
             android:layout_height="50dp"

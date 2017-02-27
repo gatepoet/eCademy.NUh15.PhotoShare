@@ -2103,40 +2103,49 @@ namespace eCademy.NUh15.PhotoShare.Droid
 			public const int design_snackbar_background = 2130837606;
 			
 			// aapt resource value: 0x7f020067
-			public const int Icon = 2130837607;
+			public const int ic_add_a_photo_white_48dp = 2130837607;
 			
 			// aapt resource value: 0x7f020068
-			public const int logo = 2130837608;
+			public const int ic_add_white_48dp = 2130837608;
 			
 			// aapt resource value: 0x7f020069
-			public const int messenger_bubble_large_blue = 2130837609;
+			public const int ic_collections_white_48dp = 2130837609;
 			
 			// aapt resource value: 0x7f02006a
-			public const int messenger_bubble_large_white = 2130837610;
+			public const int ic_file_upload_white_48dp = 2130837610;
 			
 			// aapt resource value: 0x7f02006b
-			public const int messenger_bubble_small_blue = 2130837611;
+			public const int messenger_bubble_large_blue = 2130837611;
 			
 			// aapt resource value: 0x7f02006c
-			public const int messenger_bubble_small_white = 2130837612;
+			public const int messenger_bubble_large_white = 2130837612;
 			
 			// aapt resource value: 0x7f02006d
-			public const int messenger_button_blue_bg_round = 2130837613;
+			public const int messenger_bubble_small_blue = 2130837613;
 			
 			// aapt resource value: 0x7f02006e
-			public const int messenger_button_blue_bg_selector = 2130837614;
+			public const int messenger_bubble_small_white = 2130837614;
 			
 			// aapt resource value: 0x7f02006f
-			public const int messenger_button_send_round_shadow = 2130837615;
+			public const int messenger_button_blue_bg_round = 2130837615;
 			
 			// aapt resource value: 0x7f020070
-			public const int messenger_button_white_bg_round = 2130837616;
+			public const int messenger_button_blue_bg_selector = 2130837616;
 			
 			// aapt resource value: 0x7f020071
-			public const int messenger_button_white_bg_selector = 2130837617;
+			public const int messenger_button_send_round_shadow = 2130837617;
 			
 			// aapt resource value: 0x7f020072
-			public const int notification_template_icon_bg = 2130837618;
+			public const int messenger_button_white_bg_round = 2130837618;
+			
+			// aapt resource value: 0x7f020073
+			public const int messenger_button_white_bg_selector = 2130837619;
+			
+			// aapt resource value: 0x7f020075
+			public const int notification_template_icon_bg = 2130837621;
+			
+			// aapt resource value: 0x7f020074
+			public const int photoshare_logo = 2130837620;
 			
 			static Drawable()
 			{
@@ -2623,7 +2632,7 @@ namespace eCademy.NUh15.PhotoShare.Droid
 			public const int uploadPhoto_image = 2131099808;
 			
 			// aapt resource value: 0x7f0600a1
-			public const int uploadPhoto_upload_button = 2131099809;
+			public const int uploadPhoto_uploadFab = 2131099809;
 			
 			// aapt resource value: 0x7f060014
 			public const int useLogo = 2131099668;

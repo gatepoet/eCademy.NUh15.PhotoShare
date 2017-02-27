@@ -12,18 +12,19 @@ using Android.Net;
 using Android.Support.V4.App;
 using Android.Support.Design.Widget;
 using static Android.Resource;
-using Java.IO;
 using Android.Content.PM;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using Android.Support.V7.App;
+using eCademy.NUh15.PhotoShare.Droid;
 
 namespace eCademy.NUh15.PhotoShare.Droid
 {
     [Activity(Label = "UploadPhotoActivity")]
-    public class UploadPhotoActivity : Activity
+    public class UploadPhotoActivity : AppCompatActivity
     {
-        private Button uploadButton;
+        private FloatingActionButton uploadButton;
         private ImageView imageView;
         private static Java.IO.File dir;
         private static Java.IO.File file;
@@ -33,15 +34,15 @@ namespace eCademy.NUh15.PhotoShare.Droid
             base.OnCreate(savedInstanceState);
 
             SetContentView(Resource.Layout.UploadPhoto);
-            uploadButton = FindViewById<Button>(Resource.Id.uploadPhoto_upload_button);
+            uploadButton = FindViewById<FloatingActionButton>(Resource.Id.uploadPhoto_uploadFab);
             uploadButton.Enabled = false;
+            imageView = FindViewById<ImageView>(Resource.Id.uploadPhoto_image);
+            imageView.Click += TakeAPhoto;
+            uploadButton.Click += UploadPhoto;
 
             if (IsThereAnAppToTakePictures())
             {
                 EnsurePermissions();
-                imageView = FindViewById<ImageView>(Resource.Id.uploadPhoto_image);
-                imageView.Click += TakeAPhoto;
-                uploadButton.Click += UploadPhoto;
                 EnsureDirectoryExists();
             }
         }
@@ -105,14 +106,21 @@ namespace eCademy.NUh15.PhotoShare.Droid
             progress.SetMessage(Resources.GetString(Resource.String.uploadPhoto_progressDialog_text));
             progress.SetProgressStyle(ProgressDialogStyle.Horizontal);
             progress.Show();
+
             var title = FindViewById<EditText>(Resource.Id.uploadPhoto_comment).Text;
             var filename = file.Name;
-            var bytes = System.IO.File.ReadAllBytes(file.AbsolutePath);
-
+            
+            var s = new MemoryStream();
+            var stream = new BufferedStream(s);
+            BitmapLoader.LoadImage(file.AbsolutePath).Compress(
+                    Android.Graphics.Bitmap.CompressFormat.Jpeg,
+                    100,
+                    stream);
+            
             var id = await new PhotoService().UploadPhoto(
                 title,
                 filename,
-                bytes,
+                s.ToArray(),
                 args => RunOnUiThread(() => progress.Progress = args.ProgressPercentage));
 
             if (id != Guid.Empty)

@@ -14,10 +14,10 @@ using Xamarin.Facebook;
 
 namespace eCademy.NUh15.PhotoShare.Droid
 {
-    [Activity(Label = "@string/app_name", MainLauncher = true, Icon = "@drawable/logo", Theme = "@android:style/Theme.Material.NoActionBar")]
+    [Activity(MainLauncher = true)]
     public class MainActivity : Activity
     {
-        Xamarin.Facebook.ICallbackManager callbackManager;
+        ICallbackManager callbackManager;
         FacebookTokenTracker tokenTracker;
         PhotoService photoService;
         private LoginResult loginResult;
