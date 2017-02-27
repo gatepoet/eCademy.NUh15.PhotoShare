@@ -123,13 +123,17 @@ namespace eCademy.NUh15.PhotoShare.Droid
             }
         }
 
-        public async Task<Guid> UploadPhoto(string title, string filename, byte[] file)
+        public async Task<Guid> UploadPhoto(string title, string filename, byte[] file, Action<UploadProgressChangedEventArgs> progressHandler = null)
         {
             EnsureLoggedIn();
             try
             {
                 using (var client = CreateWebClient())
                 {
+                    if (progressHandler != null)
+                    {
+                        client.UploadProgressChanged += (sender, args) => progressHandler(args);
+                    }
                     client.Headers.Add(HttpRequestHeader.Authorization, AuthorizationHeader);
                     client.Headers.Add(HttpRequestHeader.ContentType, "application/json");
                     var request = new UploadPhotoRequest { Title = title, Filename = filename, File = file };

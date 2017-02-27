@@ -107,6 +107,10 @@ namespace eCademy.NUh15.PhotoShare.Droid
 
         private async void UploadPhoto(object sender, EventArgs e)
         {
+            var progress = new ProgressDialog(this);
+            progress.SetMessage(Resources.GetString(Resource.String.uploadPhoto_progressDialog_text));
+            progress.SetProgressStyle(ProgressDialogStyle.Horizontal);
+            progress.Show();
             var title = FindViewById<EditText>(Resource.Id.uploadPhoto_comment).Text;
             var filename = file.Name;
             var bytes = System.IO.File.ReadAllBytes(file.AbsolutePath);
@@ -114,7 +118,8 @@ namespace eCademy.NUh15.PhotoShare.Droid
             var id = await new PhotoService().UploadPhoto(
                 title,
                 filename,
-                bytes);
+                bytes,
+                args => RunOnUiThread(() => progress.Progress = args.ProgressPercentage));
 
             if (id != Guid.Empty)
             {
