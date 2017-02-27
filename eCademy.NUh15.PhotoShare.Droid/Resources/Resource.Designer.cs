@@ -2616,20 +2616,14 @@ namespace eCademy.NUh15.PhotoShare.Droid
 			// aapt resource value: 0x7f060009
 			public const int up = 2131099657;
 			
-			// aapt resource value: 0x7f0600a0
-			public const int uploadPhoto_comment = 2131099808;
-			
 			// aapt resource value: 0x7f06009f
-			public const int uploadPhoto_comment_label = 2131099807;
+			public const int uploadPhoto_comment = 2131099807;
+			
+			// aapt resource value: 0x7f0600a0
+			public const int uploadPhoto_image = 2131099808;
 			
 			// aapt resource value: 0x7f0600a1
-			public const int uploadPhoto_image = 2131099809;
-			
-			// aapt resource value: 0x7f0600a2
-			public const int uploadPhoto_takePhoto_button = 2131099810;
-			
-			// aapt resource value: 0x7f0600a3
-			public const int uploadPhoto_upload_button = 2131099811;
+			public const int uploadPhoto_upload_button = 2131099809;
 			
 			// aapt resource value: 0x7f060014
 			public const int useLogo = 2131099668;
@@ -2958,8 +2952,8 @@ namespace eCademy.NUh15.PhotoShare.Droid
 			// aapt resource value: 0x7f090012
 			public const int abc_toolbar_collapse_description = 2131296274;
 			
-			// aapt resource value: 0x7f09002d
-			public const int app_name = 2131296301;
+			// aapt resource value: 0x7f09002e
+			public const int app_name = 2131296302;
 			
 			// aapt resource value: 0x7f090014
 			public const int appbar_scrolling_view_behavior = 2131296276;
@@ -3021,17 +3015,20 @@ namespace eCademy.NUh15.PhotoShare.Droid
 			// aapt resource value: 0x7f090027
 			public const int com_facebook_tooltip_default = 2131296295;
 			
-			// aapt resource value: 0x7f09002e
-			public const int facebook_app_id = 2131296302;
-			
 			// aapt resource value: 0x7f09002f
-			public const int fb_login_protocol_scheme = 2131296303;
+			public const int facebook_app_id = 2131296303;
+			
+			// aapt resource value: 0x7f090030
+			public const int fb_login_protocol_scheme = 2131296304;
 			
 			// aapt resource value: 0x7f090028
 			public const int messenger_send_button_text = 2131296296;
 			
 			// aapt resource value: 0x7f090013
 			public const int status_bar_notification_info_overflow = 2131296275;
+			
+			// aapt resource value: 0x7f09002d
+			public const int uploadPhoto_progressDialog_text = 2131296301;
 			
 			static String()
 			{

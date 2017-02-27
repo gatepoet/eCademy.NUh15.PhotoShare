@@ -25,7 +25,6 @@ namespace eCademy.NUh15.PhotoShare.Droid
     {
         private Button uploadButton;
         private ImageView imageView;
-        private Button takePhotoButton;
         private static Java.IO.File dir;
         private static Java.IO.File file;
 
@@ -43,8 +42,7 @@ namespace eCademy.NUh15.PhotoShare.Droid
                 dir = Android.OS.Environment.GetExternalStoragePublicDirectory(
                     Android.OS.Environment.DirectoryPictures);
                 imageView = FindViewById<ImageView>(Resource.Id.uploadPhoto_image);
-                takePhotoButton = FindViewById<Button>(Resource.Id.uploadPhoto_takePhoto_button);
-                takePhotoButton.Click += TakeAPhoto;
+                imageView.Click += TakeAPhoto;
                 uploadButton.Click += UploadPhoto;
             }
         }
