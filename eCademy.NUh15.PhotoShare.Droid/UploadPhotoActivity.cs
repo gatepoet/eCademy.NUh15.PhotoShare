@@ -71,12 +71,7 @@ namespace eCademy.NUh15.PhotoShare.Droid
                 var permission = Manifest.Permission.WriteExternalStorage;
                 if (CheckSelfPermission(permission) == Permission.Denied)
                 {
-                    RequestPermissions(new[] { permission }, 0);
-                };
-                permission = Manifest.Permission.ReadExternalStorage;
-                if (CheckSelfPermission(permission) == Permission.Denied)
-                {
-                    RequestPermissions(new[] { permission }, 0);
+                    RequestPermissions(new[] { permission }, RequestCodes.UploadPhotoPermissionRequest);
                 };
             }
         }
