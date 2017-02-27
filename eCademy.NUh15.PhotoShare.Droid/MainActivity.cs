@@ -14,7 +14,7 @@ using Xamarin.Facebook;
 
 namespace eCademy.NUh15.PhotoShare.Droid
 {
-    [Activity(Label = "@string/app_name", MainLauncher = true, Icon = "@drawable/logo", Theme = "@android:style/Theme.Holo.NoActionBar")]
+    [Activity(Label = "@string/app_name", MainLauncher = true, Icon = "@drawable/logo", Theme = "@android:style/Theme.Material.NoActionBar")]
     public class MainActivity : Activity
     {
         Xamarin.Facebook.ICallbackManager callbackManager;
