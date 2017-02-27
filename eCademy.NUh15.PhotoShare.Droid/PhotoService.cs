@@ -101,7 +101,6 @@ namespace eCademy.NUh15.PhotoShare.Droid
 
         public async Task<Bitmap> GetImage(string url, int size)
         {
-
             try
             {
                 using (var client = CreateWebClient())
@@ -145,7 +144,6 @@ namespace eCademy.NUh15.PhotoShare.Droid
                 return Guid.Empty;
             }
         }
-
 
         private void EnsureLoggedIn()
         {
