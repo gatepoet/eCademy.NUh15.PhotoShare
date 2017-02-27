@@ -3024,6 +3024,9 @@ namespace eCademy.NUh15.PhotoShare.Droid
 			// aapt resource value: 0x7f09002e
 			public const int facebook_app_id = 2131296302;
 			
+			// aapt resource value: 0x7f09002f
+			public const int fb_login_protocol_scheme = 2131296303;
+			
 			// aapt resource value: 0x7f090028
 			public const int messenger_send_button_text = 2131296296;
 			

@@ -5,4 +5,5 @@
   <string name="ApplicationName">eCademy.NUh15.PhotoShare.Droid</string>
   <string name="app_name">PhotoShare\nNUh15</string>
   <string name="facebook_app_id">706020479548518</string>
+  <string name="fb_login_protocol_scheme">fb706020479548518</string>
 </resources>
