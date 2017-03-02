@@ -14,13 +14,14 @@ using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using eCademy.NUh15.PhotoShare.Services;
 
 namespace eCademy.NUh15.PhotoShare.Controllers.API
 {
     public class PhotosController : ApiController
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
         private ApplicationUserManager _userManager;
+        private PhotoService photoService = new PhotoService();
 
         public PhotosController()
         {
@@ -46,10 +47,7 @@ namespace eCademy.NUh15.PhotoShare.Controllers.API
         // GET: api/Photos
         public IEnumerable<PhotoDto> GetPhotos()
         {
-            return db.Photos
-                .OrderByDescending(p => p.Timestamp)
-                .Take(9)
-                .ToList()
+            return photoService.GetAll()
                 .Select(p => new PhotoDto {
                     Id = p.Id,
                     Title = p.Title,
@@ -66,7 +64,7 @@ namespace eCademy.NUh15.PhotoShare.Controllers.API
         [ResponseType(typeof(PhotoDto))]
         public IHttpActionResult GetPhoto(Guid id, int? thumb)
         {
-            var p = db.Photos.Find(id);
+            var p = photoService.GetById(id);
             if (p == null)
             {
                 return NotFound();
@@ -100,22 +98,15 @@ namespace eCademy.NUh15.PhotoShare.Controllers.API
                 return BadRequest();
             }
 
-            db.Entry(photo).State = EntityState.Modified;
 
             try
             {
-                db.SaveChanges();
+                photoService.Save(photo);
+
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DuplicateException<Photo>)
             {
-                if (!PhotoExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound();
             }
 
             return StatusCode(HttpStatusCode.NoContent);
@@ -132,43 +123,24 @@ namespace eCademy.NUh15.PhotoShare.Controllers.API
                 return BadRequest(ModelState);
             }
 
-            var user = db.Users.Find(User.Identity.GetUserId());
-
-            var photo = new Photo
-            {
-                Id = Guid.NewGuid(),
-                User = user,
-                Image = new Models.Image
-                {
-                    Id = Guid.NewGuid(),
-                    Filename = request.Filename,
-                    Data = request.File
-                },
-                Title = request.Title,
-                Timestamp = DateTime.Now
-            };
-
-            db.Photos.Add(photo);
-
-
+            var id = Guid.NewGuid();
             try
             {
-                db.SaveChanges();
-            }
-            catch (DbUpdateException)
-            {
-                if (PhotoExists(photo.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+                photoService.AddPhoto(
+                    id,
+                    request.Filename,
+                    request.File,
+                    request.Title);
 
-            return Ok(photo.Id);
+                return Ok(id);
+            }
+            catch (DuplicateException<Photo>)
+            {
+                return Conflict();
+            }
         }
+
+
         // POST: api/Photos
         [HttpPost]
         [Authorize]
@@ -183,42 +155,22 @@ namespace eCademy.NUh15.PhotoShare.Controllers.API
             var request = HttpContext.Current.Request;
             var file = request.Files[0];
             var title = request.Form["title"];
+            var filename = request.Form["filename"];
 
-            var user = db.Users.Find(User.Identity.GetUserId());
-
-            var photo = new Photo
-            {
-                Id = Guid.NewGuid(),
-                User = user,
-                Image = new Models.Image
-                {
-                    Id = Guid.NewGuid(),
-                    Filename = file.FileName,
-                    Data = ConvertToByteArray(file.InputStream)
-                },
-                Title = title,
-                Timestamp = DateTime.Now
-            };
-
-            db.Photos.Add(photo);
-
+            var id = Guid.NewGuid();
             try
             {
-                db.SaveChanges();
+                var photo = photoService.AddPhoto(
+                    id,
+                    file.FileName,
+                    ConvertToByteArray(file.InputStream),
+                    title);
+                return CreatedAtRoute("DefaultApi", new { id = photo.Id }, photo);
             }
-            catch (DbUpdateException)
+            catch (DuplicateException<Photo>)
             {
-                if (PhotoExists(photo.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
+                return Conflict();
             }
-
-            return CreatedAtRoute("DefaultApi", new { id = photo.Id }, photo);
         }
 
         private byte[] ConvertToByteArray(Stream inputStream)
@@ -233,14 +185,14 @@ namespace eCademy.NUh15.PhotoShare.Controllers.API
         // DELETE: api/Photos/5
         public IHttpActionResult DeletePhoto(Guid id)
         {
-            Photo photo = db.Photos.Find(id);
-            if (photo == null)
+            try
+            {
+                photoService.DeletePhoto(id);
+            }
+            catch (NotFoundException<Photo>)
             {
                 return NotFound();
             }
-
-            db.Photos.Remove(photo);
-            db.SaveChanges();
 
             return Ok();
         }
@@ -250,28 +202,9 @@ namespace eCademy.NUh15.PhotoShare.Controllers.API
         [Route("api/photo/{id:guid}/rate/{rating:int}")]
         public IHttpActionResult PutRate(Guid id, int rating)
         {
-            var photo = db.Photos.Find(id);
-            var user = db.Users.Find(User.Identity.GetUserId());
-
-            photo.Rate(rating, user);
-            db.SaveChanges();
-            var newScore = photo.GetScore();
+            var newScore = photoService.RatePhoto(id, rating);
 
             return Ok(new RateResult(newScore));
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
-        private bool PhotoExists(Guid id)
-        {
-            return db.Photos.Count(e => e.Id == id) > 0;
         }
     }
 }
