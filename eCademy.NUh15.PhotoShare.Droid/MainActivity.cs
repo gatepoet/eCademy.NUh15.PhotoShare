@@ -98,14 +98,7 @@ namespace eCademy.NUh15.PhotoShare.Droid
         {
             base.OnActivityResult(requestCode, resultCode, data);
 
-            switch (requestCode)
-            {
-                case RequestCodes.FacebookLoginRequest:
-                    callbackManager.OnActivityResult(requestCode, (int)resultCode, data);
-                    break;
-                default:
-                    break;
-            }
+            callbackManager.OnActivityResult(requestCode, (int)resultCode, data);
         }
 
         private void SignInWithFacebookToken(LoginResult loginResult)
